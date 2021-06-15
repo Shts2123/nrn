@@ -10,7 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r packages, echo=F, message=F,warning=F}
-.libPaths("/users/lars/Software/RLibs-4/")
 require(ggplot2)
 require(Seurat)
 require(reshape2)
@@ -37,10 +36,7 @@ Goals of this notebook are
 First, you need a Seurat object containign a well annotated reference of cell states encountered in blood and bone marrow. We recommend ours :-)
 
 ```{r loadReference}
-#LV: replace by fisgshare
-load("/users/lvelten/project/AML/gene_expression/data/Sergio_figshare/mainData.rda")
-Healthy <- subset(BM_All,subset = Batch %in% c("AML1","AML2","AML3","Q59"),invert=T)
-rm(BM_All)
+Healthy <- readRDS(url("https://ndownloader.figshare.com/files/28408638")) #in case this link breaks, see https://doi.org/10.6084/m9.figshare.13397651.v3
 ```
 
 Second, you need a count matrix of your data. If your goal is to perform differential expression testing and to identify genes expressed, e.g., in diseased HSCs but not in healthy HSCs, you **absolutely need your own healthy controls**. **You cannot compare your disease samples to our healthy samples, since there will *always* be study specific batch effects**. 
@@ -55,8 +51,7 @@ reproduce <- FALSE
 
 
 ```{r loadQuery}
-#LV: replace by figshare
-AMLs <- readRDS("/users/lvelten/project/AML/gene_expression/data/Sergio_figshare/AMLs_Scano_projected.rds")
+AMLs <- readRDS(url("https://ndownloader.figshare.com/files/28403676")) #If the link breaks, see https://doi.org/10.6084/m9.figshare.14780127.v1
 
 #replace this line by a command that loads your seurart object. To make sure you use the same normalization that we use , run Seurat normalization. In this case, the antibody counts are CLR normalizaed and the RNA counts were Log Normalized.
 #The object needs to have a metadata column Batch that encodes sample identity
@@ -70,9 +65,9 @@ AMLs <- readRDS("/users/lvelten/project/AML/gene_expression/data/Sergio_figshare
 normalized_counts <- GetAssayData(merged, assay = "BOTH", slot="data")
 counts <- GetAssayData(merged, assay = "BOTH", slot="counts") 
 
-#replace this line by a command that loads you patient-level meta data
+#replace this line by a command that loads you patient-level meta data. metadata.tsv file is contained in this git directory.
 #(row names should correspond to the Batch IDs used in the cell-level meta data, and there should be a column called Status that determines if the individuals are "healthy" or "diseased")
-patient.metadata <- read.table("metadata.tsv", sep="\t",header=T,row.names=1)
+patient.metadata <- read.table(url("git.embl.de/triana/nrn/-/raw/master/Projection_Vignette/metadata.tsv"), sep="\t",header=T,row.names=1)
 
 merged$status <- patient.metadata[as.character(merged$Batch),"Status"]
 ```
