@@ -106,7 +106,7 @@ project_anyref <- function(seurat, neighbours = 5, cores = 6, features = NULL,
     if (is.null(ref_pseudotime)) {
       pst.projected <- NA
     } else {
-      pst <- seurat57@meta.data[u,ref_pseudotime]
+      pst <- ref@meta.data[u,ref_pseudotime]
       pst.projected<-mean(na.omit(pst))  
     }
     
